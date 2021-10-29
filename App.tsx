@@ -1,23 +1,42 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import React from "react";
+import {
+  Text,
+  StatusBar as AndroidStatusBarHeight,
+  Platform,
+} from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import LoadingScreen from "./screens/LoadingScreen";
+import LoginScreen from "./screens/LoginScreen";
+import HomeScreen from "./screens/HomeScreen";
 
-import useCachedResources from './hooks/useCachedResources';
-import useColorScheme from './hooks/useColorScheme';
-import Navigation from './navigation';
+export type RootStackParamList = {
+  Loading: undefined;
+  Login: undefined;
+  Home: undefined;
+};
+const App = () => {
+  const Stack = createStackNavigator();
 
-export default function App() {
-  const isLoadingComplete = useCachedResources();
-  const colorScheme = useColorScheme();
+  return (
+    <SafeAreaProvider
+      style={{
+        marginTop:
+          Platform.OS === "android" ? AndroidStatusBarHeight.currentHeight : 0,
+        flex: 1,
+      }}
+    >
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Loading">
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Loading" component={LoadingScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
+  );
+};
 
-  if (!isLoadingComplete) {
-    return null;
-  } else {
-    return (
-      <SafeAreaProvider>
-        <Navigation colorScheme={colorScheme} />
-        <StatusBar />
-      </SafeAreaProvider>
-    );
-  }
-}
+export default App;
